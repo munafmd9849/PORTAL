@@ -117,7 +117,7 @@ User → Firebase Auth SDK
   ↓
 Firebase Auth → Verify credentials
   ↓
-Firebase Auth → Return token
+Firebase Auth → Return token 
   ↓
 Frontend → Store token
   ↓

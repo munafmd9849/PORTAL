@@ -6,14 +6,14 @@ CREATE TABLE "users" (
     "role" TEXT NOT NULL DEFAULT 'STUDENT',
     "status" TEXT NOT NULL DEFAULT 'PENDING',
     "emailVerified" BOOLEAN NOT NULL DEFAULT false,
-    "emailVerifiedAt" DATETIME,
+    "emailVerifiedAt" TIMESTAMP,
     "recruiterVerified" BOOLEAN NOT NULL DEFAULT false,
     "displayName" TEXT,
     "profilePhoto" TEXT,
     "blockInfo" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    "lastLoginAt" DATETIME
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
+    "lastLoginAt" TIMESTAMP
 );
 
 -- CreateTable
@@ -21,8 +21,8 @@ CREATE TABLE "refresh_tokens" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "userId" TEXT NOT NULL,
     "token" TEXT NOT NULL,
-    "expiresAt" DATETIME NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expiresAt" TIMESTAMP NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "refresh_tokens_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -32,9 +32,9 @@ CREATE TABLE "otps" (
     "email" TEXT NOT NULL,
     "otp" TEXT NOT NULL,
     "purpose" TEXT NOT NULL DEFAULT 'VERIFY_EMAIL',
-    "expiresAt" DATETIME NOT NULL,
+    "expiresAt" TIMESTAMP NOT NULL,
     "isUsed" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateTable
@@ -63,14 +63,14 @@ CREATE TABLE "students" (
     "hackerrank" TEXT,
     "resumeUrl" TEXT,
     "resumeFileName" TEXT,
-    "resumeUploadedAt" DATETIME,
+    "resumeUploadedAt" TIMESTAMP,
     "statsApplied" INTEGER NOT NULL DEFAULT 0,
     "statsShortlisted" INTEGER NOT NULL DEFAULT 0,
     "statsInterviewed" INTEGER NOT NULL DEFAULT 0,
     "statsOffers" INTEGER NOT NULL DEFAULT 0,
     "emailNotificationsDisabled" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "students_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -80,8 +80,8 @@ CREATE TABLE "skills" (
     "studentId" TEXT NOT NULL,
     "skillName" TEXT NOT NULL,
     "rating" INTEGER NOT NULL DEFAULT 1,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "skills_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "students" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -95,8 +95,8 @@ CREATE TABLE "education" (
     "endYear" INTEGER,
     "cgpa" REAL,
     "description" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "education_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "students" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -109,8 +109,8 @@ CREATE TABLE "projects" (
     "technologies" TEXT NOT NULL,
     "githubUrl" TEXT,
     "liveUrl" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "projects_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "students" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -120,11 +120,11 @@ CREATE TABLE "achievements" (
     "studentId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
-    "date" DATETIME,
+    "date" TIMESTAMP,
     "hasCertificate" BOOLEAN NOT NULL DEFAULT false,
     "certificateUrl" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "achievements_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "students" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -134,12 +134,12 @@ CREATE TABLE "certifications" (
     "studentId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
-    "issuedDate" DATETIME,
-    "expiryDate" DATETIME,
+    "issuedDate" TIMESTAMP,
+    "expiryDate" TIMESTAMP,
     "certificateUrl" TEXT,
     "issuer" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "certifications_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "students" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -150,8 +150,8 @@ CREATE TABLE "coding_profiles" (
     "platform" TEXT NOT NULL,
     "profileUrl" TEXT NOT NULL,
     "username" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "coding_profiles_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "students" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -163,8 +163,8 @@ CREATE TABLE "companies" (
     "website" TEXT,
     "location" TEXT,
     "description" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -176,8 +176,8 @@ CREATE TABLE "recruiters" (
     "location" TEXT,
     "relationshipType" TEXT,
     "zone" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "recruiters_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "recruiters_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "companies" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -197,8 +197,8 @@ CREATE TABLE "jobs" (
     "salaryRange" TEXT,
     "location" TEXT,
     "companyLocation" TEXT,
-    "driveDate" DATETIME,
-    "applicationDeadline" DATETIME,
+    "driveDate" TIMESTAMP,
+    "applicationDeadline" TIMESTAMP,
     "jobType" TEXT,
     "experienceLevel" TEXT,
     "driveVenues" TEXT NOT NULL,
@@ -209,18 +209,18 @@ CREATE TABLE "jobs" (
     "targetSchools" TEXT NOT NULL,
     "targetCenters" TEXT NOT NULL,
     "targetBatches" TEXT NOT NULL,
-    "submittedAt" DATETIME,
-    "postedAt" DATETIME,
+    "submittedAt" TIMESTAMP,
+    "postedAt" TIMESTAMP,
     "postedBy" TEXT,
-    "approvedAt" DATETIME,
+    "approvedAt" TIMESTAMP,
     "approvedBy" TEXT,
-    "rejectedAt" DATETIME,
+    "rejectedAt" TIMESTAMP,
     "rejectedBy" TEXT,
     "rejectionReason" TEXT,
-    "archivedAt" DATETIME,
+    "archivedAt" TIMESTAMP,
     "archivedBy" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "jobs_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "companies" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "jobs_recruiterId_fkey" FOREIGN KEY ("recruiterId") REFERENCES "recruiters" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -232,10 +232,10 @@ CREATE TABLE "job_tracking" (
     "jobId" TEXT NOT NULL,
     "isNew" BOOLEAN NOT NULL DEFAULT true,
     "viewed" BOOLEAN NOT NULL DEFAULT false,
-    "viewedAt" DATETIME,
+    "viewedAt" TIMESTAMP,
     "applied" BOOLEAN NOT NULL DEFAULT false,
-    "appliedAt" DATETIME,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "appliedAt" TIMESTAMP,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "job_tracking_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "students" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "job_tracking_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "jobs" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -247,11 +247,11 @@ CREATE TABLE "applications" (
     "jobId" TEXT NOT NULL,
     "companyId" TEXT,
     "status" TEXT NOT NULL DEFAULT 'APPLIED',
-    "appliedDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "interviewDate" DATETIME,
+    "appliedDate" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "interviewDate" TIMESTAMP,
     "notes" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "applications_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "students" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "applications_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "jobs" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -266,8 +266,8 @@ CREATE TABLE "resumes" (
     "previewMode" TEXT NOT NULL DEFAULT 'original',
     "fileUrl" TEXT,
     "fileName" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -278,8 +278,8 @@ CREATE TABLE "notifications" (
     "body" TEXT NOT NULL,
     "data" TEXT NOT NULL DEFAULT '{}',
     "isRead" BOOLEAN NOT NULL DEFAULT false,
-    "readAt" DATETIME,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "readAt" TIMESTAMP,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "notifications_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -293,8 +293,8 @@ CREATE TABLE "email_notifications" (
     "subject" TEXT,
     "body" TEXT,
     "error" TEXT,
-    "sentAt" DATETIME,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "sentAt" TIMESTAMP,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateTable
@@ -306,9 +306,9 @@ CREATE TABLE "student_queries" (
     "status" TEXT NOT NULL DEFAULT 'OPEN',
     "response" TEXT,
     "respondedBy" TEXT,
-    "respondedAt" DATETIME,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "respondedAt" TIMESTAMP,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "student_queries_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -319,10 +319,10 @@ CREATE TABLE "admin_requests" (
     "email" TEXT NOT NULL,
     "reason" TEXT,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
-    "requestedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "approvedAt" DATETIME,
+    "requestedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "approvedAt" TIMESTAMP,
     "approvedBy" TEXT,
-    "rejectedAt" DATETIME,
+    "rejectedAt" TIMESTAMP,
     "rejectedBy" TEXT,
     CONSTRAINT "admin_requests_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -332,8 +332,8 @@ CREATE TABLE "admins" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "userId" TEXT NOT NULL,
     "name" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "admins_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 

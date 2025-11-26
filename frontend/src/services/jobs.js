@@ -8,49 +8,25 @@ import api from './api.js';
 /**
  * List jobs with filters
  */
-export async function listJobs({ limitTo = 50, recruiterId, status } = {}) {
+export async function listJobs({ limitTo = 50, recruiterId, status, page, isPosted } = {}) {
   try {
-    // For now, always use mock data to ensure the page displays properly
-    // TODO: Re-enable real API fetching once backend is fully robust
-    const mockJobs = getMockJobs();
-    
-    // Apply filters
-    let filteredJobs = mockJobs;
-    if (status) {
-      if (status === 'POSTED' || status === 'posted') {
-        filteredJobs = mockJobs.filter(j => j.isPosted || j.status === 'posted');
-      } else if (status === 'DRAFT' || status === 'draft') {
-        filteredJobs = mockJobs.filter(j => !j.isPosted && j.status === 'draft');
-      }
+     const params = {};
+    if (typeof limitTo === 'number' && limitTo > 0) {
+      params.limit = limitTo;
     }
-    
-    if (limitTo) {
-      filteredJobs = filteredJobs.slice(0, limitTo);
-    }
-    
-    return filteredJobs;
-
-    // TODO: Uncomment when ready to use real data
-    /*
-    const params = {};
-    if (limitTo) params.limit = limitTo;
     if (recruiterId) params.recruiterId = recruiterId;
     if (status) params.status = status;
-    
-    const jobs = await api.getJobs(params);
-    if (jobs && jobs.length > 0) {
-      return jobs;
-    }
-    
-    // Fallback to mock data
-    const mockJobs = getMockJobs();
-    return mockJobs.slice(0, limitTo || 50);
-    */
+    if (typeof isPosted !== 'undefined') params.isPosted = isPosted;
+    if (page) params.page = page;
+
+    const response = await api.getJobs(params);
+    const jobs = Array.isArray(response?.jobs) ? response.jobs : Array.isArray(response) ? response : [];
+    const limit = typeof limitTo === 'number' && limitTo > 0 ? limitTo : jobs.length;
+    return limit > 0 ? jobs.slice(0, limit) : jobs;
   } catch (error) {
     console.error('listJobs error:', error);
-    // Return mock data on error
     const mockJobs = getMockJobs();
-    return mockJobs.slice(0, limitTo || 50);
+    return mockJobs.slice(0, limitTo || mockJobs.length);
   }
 }
 
@@ -134,27 +110,17 @@ export async function deleteJob(jobId) {
  * Get targeted jobs for student
  * Replaces real-time subscription with one-time API call
  */
-export async function getTargetedJobsForStudent(studentId) {
+export async function getTargetedJobsForStudent() {
   try {
-    // For now, always use mock data to ensure the page displays properly
-    // TODO: Re-enable real API fetching once backend is fully robust
-    const mockJobs = getMockJobs();
-    // Return only posted jobs for students
-    return mockJobs.filter(j => j.isPosted || j.status === 'posted');
-
-    // TODO: Uncomment when ready to use real data
-    /*
     const jobs = await api.getTargetedJobs();
-    if (jobs && jobs.length > 0) {
+    if (Array.isArray(jobs) && jobs.length > 0) {
       return jobs;
     }
     // Fallback to mock data
     const mockJobs = getMockJobs();
     return mockJobs.filter(j => j.isPosted || j.status === 'posted');
-    */
   } catch (error) {
     console.error('getTargetedJobsForStudent error:', error);
-    // Return mock data on error
     const mockJobs = getMockJobs();
     return mockJobs.filter(j => j.isPosted || j.status === 'posted');
   }
@@ -312,69 +278,44 @@ function getMockJobs() {
  * This function now returns an empty unsubscribe for backward compatibility
  */
 export function subscribeJobs(callback, filters = {}) {
-  // Load jobs once instead of real-time subscription
+  let active = true;
+
   (async () => {
     try {
-      // For now, always use mock data to ensure the page displays properly
-      // TODO: Re-enable real API fetching once backend is fully robust
-      const mockJobs = getMockJobs();
-      
-      // Apply basic filtering if needed
-      let filteredJobs = mockJobs;
-      if (filters.status) {
-        if (filters.status === 'POSTED' || filters.status === 'posted') {
-          filteredJobs = mockJobs.filter(j => j.isPosted || j.status === 'posted');
-        } else if (filters.status === 'DRAFT' || filters.status === 'draft') {
-          filteredJobs = mockJobs.filter(j => !j.isPosted && j.status === 'draft');
-        }
-      }
-      
-      callback(filteredJobs);
-
-      // TODO: Uncomment when ready to use real data
-      /*
-      // Try real API first, fallback to mock data
-      try {
-        const jobs = await listJobs(filters);
-        if (jobs && jobs.length > 0) {
-          callback(jobs);
-          return;
-        }
-      } catch (apiError) {
-        console.log('API call failed, using mock data:', apiError.message);
-      }
-      
-      // Use mock data as fallback
-      const mockJobs = getMockJobs();
-      callback(mockJobs);
-      */
+      const jobs = await listJobs(filters);
+      if (!active) return;
+      callback(jobs);
     } catch (error) {
       console.error('subscribeJobs error:', error);
-      callback([]);
+      if (active) callback([]);
     }
   })();
   
-  // Return empty unsubscribe function for backward compatibility
-  return () => {};
+  return () => {
+    active = false;
+  };
 }
 
 /**
  * Subscribe to posted jobs (replaced with load-once pattern)
  */
 export function subscribePostedJobs(callback, filters = {}) {
-  // Load posted jobs once
+  let active = true;
+
   (async () => {
     try {
       const jobs = await listJobs({ ...filters, status: 'POSTED' });
+      if (!active) return;
       callback(jobs);
     } catch (error) {
       console.error('subscribePostedJobs error:', error);
-      callback([]);
+      if (active) callback([]);
     }
   })();
   
-  // Return empty unsubscribe function for backward compatibility
-  return () => {};
+  return () => {
+    active = false;
+  };
 }
 
 /**

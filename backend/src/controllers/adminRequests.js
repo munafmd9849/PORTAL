@@ -328,4 +328,3 @@ export async function rejectAdminRequest(req, res) {
     res.status(500).json({ error: 'Failed to reject admin request' });
   }
 }
-
